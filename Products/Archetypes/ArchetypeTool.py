@@ -1,4 +1,5 @@
 from __future__ import nested_scopes
+import logging
 
 import os.path
 import sys
@@ -664,7 +665,7 @@ class ArchetypeTool(UniqueObject, ActionProviderBase, \
         if isinstance(type, dict) and type.has_key('klass'):
             type = type['klass']
         for iface in interfaces:
-            res = iface.isImplementedByInstancesOf(type)
+            res = iface.implementedBy(type)
             if res:
                 return True
         return False
@@ -702,7 +703,7 @@ class ArchetypeTool(UniqueObject, ActionProviderBase, \
         for data in listTypes():
             klass = data['klass']
             for iface in ifaces:
-                if iface.isImplementedByInstancesOf(klass):
+                if iface.implementedBy(klass):
                     ti = pt.getTypeInfo(data['portal_type'])
                     if ti is not None:
                         value.append(ti)
