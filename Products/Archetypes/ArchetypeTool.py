@@ -665,7 +665,14 @@ class ArchetypeTool(UniqueObject, ActionProviderBase, \
         if isinstance(type, dict) and type.has_key('klass'):
             type = type['klass']
         for iface in interfaces:
-            res = iface.implementedBy(type)
+            logging.info('%s: %s' % (iface, type))
+            try:
+                res = iface.implementedBy(type)
+            except AttributeError, e:
+                res = False
+                logging.info('AttError: %s' % (e))
+                if hasattr(iface, 'isImplementedByInstancesOf'):
+                    res = iface.isImplementedByInstancesOf(type)
             if res:
                 return True
         return False
@@ -703,7 +710,14 @@ class ArchetypeTool(UniqueObject, ActionProviderBase, \
         for data in listTypes():
             klass = data['klass']
             for iface in ifaces:
-                if iface.implementedBy(klass):
+                try:
+                    res = iface.implementedBy(klass)
+                except AttributeError, e:
+                    res = False
+                    logging.info('AttError: %s' % (e))
+                    if hasattr(iface, 'isImplementedByInstancesOf'):
+                        res = iface.isImplementedByInstancesOf(klass)
+                if res:
                     ti = pt.getTypeInfo(data['portal_type'])
                     if ti is not None:
                         value.append(ti)
