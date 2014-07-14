@@ -10,6 +10,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.event import WebDAVObjectInitializedEvent
 from Products.Archetypes.event import WebDAVObjectEditedEvent
 from Products.Archetypes.utils import shasattr, mapply
+import mimetypes
+
 
 class PdataStreamIterator(object):
 
@@ -93,6 +95,10 @@ def PUT(self, REQUEST=None, RESPONSE=None):
         mimetype = str(mimetype).split(';')[0].strip()
 
     filename = posixpath.basename(REQUEST.get('PATH_INFO', self.getId()))
+    guessed_type, enc = mimetypes.guess_type(filename)
+    if guessed_type:
+        mimetype = guessed_type
+
     # XXX remove after we are using global services
     # use the request to find an object in the traversal hierachy that is
     # able to acquire a mimetypes_registry instance
